@@ -20,6 +20,7 @@ if (!isset($arguments["data"])) {
 $fhIn = fopen('/data/in/tables/source.csv', 'r');
 $fhOut = fopen('/data/out/tables/destination.csv', 'w');
 $header = fgetcsv($fhIn);
+$counter = 0;
 
 try {
     $dataDir = $arguments["data"] . DIRECTORY_SEPARATOR;
@@ -46,6 +47,7 @@ try {
 
             while ($row = fgetcsv($fhIn)) {
                 $row = array_map('trim', $row);
+                $isUpdate = false;
 
                 $company = array(
                     'CompanyName' => $row[array_search('CompanyName', $header)],
@@ -69,9 +71,12 @@ try {
                     )
                 );
 
-                if($row[0] != "NULL") {
+                $guid = $row[array_search('ItemGUID', $header)];
+
+                if($guid != "NULL") {
                     $company['ItemGUID'] = $row[array_search('ItemGUID', $header)];
                     $company['ItemVersion'] = $row[array_search('ItemVersion', $header)]++;
+                    $isUpdate = true;
                 }
 
 //                print_r($company);
@@ -79,12 +84,14 @@ try {
 
 //                print_r($result);
                 if ($result->ReturnCode == 'rcSuccess') {
-                    echo "New company created with Guid {$result->Guid} \n";
+                    $msg = ($isUpdate) ? "Company updated " : "New company created ";
+                    $msg .= "with Guid {$result->Guid} \n";
+                    echo msg;
 //                fputcsv($fhOut, $row); TODO write log of stored companies
                 } else {
-                    echo "Unable to create new company: {$result->Description} \n";
+                    echo "Unable to create/update company: {$result->Description} \n";
                 }
-
+                $counter++;
             }
 
             break;
@@ -93,6 +100,7 @@ try {
 
             while ($row = fgetcsv($fhIn)) {
                 $row = array_map('trim', $row);
+                $isUpdate = false;
 
                 $project = array(
                     'Companies_CustomerGuid' => $row[array_search('CompanyGUID', $header)],
@@ -105,6 +113,7 @@ try {
                     )
                 );
 
+                $guid = $row[array_search('ItemGUID', $header)];
                 $projectStart = $row[array_search('ProjectStart', $header)];
                 $projectEnd = $row[array_search('ProjectEnd', $header)];
                 $estimatedPrice = $row[array_search('EstimatedPrice', $header)];
@@ -115,9 +124,10 @@ try {
                 if(! empty($estimatedPrice)) $project['EstimatedPrice'] = $estimatedPrice;
                 if(! empty($note)) $project['Note'] = $note;
 
-                if($row[0] != "NULL") {
-                    $company['ItemGUID'] = $row[array_search('ItemGUID', $header)];
+                if($guid != "NULL") {
+                    $company['ItemGUID'] = $guid;
                     $company['ItemVersion'] = $row[array_search('ItemVersion', $header)]++;
+                    $isUpdate = true;
                 }
 
 //                print_r($project);
@@ -125,11 +135,14 @@ try {
 
 //                print_r($result);
                 if ($result->ReturnCode == 'rcSuccess') {
-                    echo "New project created with Guid {$result->Guid} \n";
+                    $msg = ($isUpdate) ? "Project updated " : "New project created ";
+                    $msg .= "with Guid {$result->Guid} \n";
+                    echo msg;
 //                fputcsv($fhOut, $row); TODO write log of stored projects
                 } else {
                     echo "Unable to create new project: {$result->Description} \n";
                 }
+                $counter++;
             }
 
             break;
@@ -148,5 +161,5 @@ try {
 fclose($fhIn);
 fclose($fhOut);
 
-print "Processed " . count($result->Data) . " rows." . $NL;
+print "Processed " . $counter . " rows." . $NL;
 exit(0);
