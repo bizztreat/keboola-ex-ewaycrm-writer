@@ -86,7 +86,7 @@ try {
                 if ($result->ReturnCode == 'rcSuccess') {
                     $msg = ($isUpdate) ? "Company updated " : "New company created ";
                     $msg .= "with Guid {$result->Guid} \n";
-                    echo msg;
+                    echo $msg;
 //                fputcsv($fhOut, $row); TODO write log of stored companies
                 } else {
                     echo "Unable to create/update company: {$result->Description} \n";
@@ -137,7 +137,7 @@ try {
                 if ($result->ReturnCode == 'rcSuccess') {
                     $msg = ($isUpdate) ? "Project updated " : "New project created ";
                     $msg .= "with Guid {$result->Guid} \n";
-                    echo msg;
+                    echo $msg;
 //                fputcsv($fhOut, $row); TODO write log of stored projects
                 } else {
                     echo "Unable to create new project: {$result->Description} \n";
