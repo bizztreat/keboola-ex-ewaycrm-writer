@@ -9,20 +9,29 @@ require_once "eway/eway.class.php";
 
 $NL = "\r\n";
 
-// Validation
 $arguments = getopt("d::", array("data::"));
+
 //print_r($arguments);
 if (!isset($arguments["data"])) {
     print "Data folder not set.";
     exit(1);
 }
 
-$fhIn = fopen('/data/in/tables/source.csv', 'r');
-$fhOut = fopen('/data/out/tables/destination.csv', 'w');
-$header = fgetcsv($fhIn);
-$counter = 0;
-
 try {
+    $fhIn = fopen('/data/in/tables/source.csv', 'r');
+    $fhOut = fopen('/data/out/tables/destination.csv', 'w');
+    if (!$fhIn) {
+        print "Input file open failed.";
+        exit(1);
+    }
+    if (!$fhIn) {
+        print "Output file open failed.";
+        exit(1);
+    }
+
+    $header = fgetcsv($fhIn);
+    $counter = 0;
+
     $dataDir = $arguments["data"] . DIRECTORY_SEPARATOR;
     $configFile = $dataDir . 'config.json';
 
@@ -31,12 +40,12 @@ try {
     $webServiceAddress = $config['parameters']['webServiceAddress'];
     $username = $config['parameters']['username'];
     $password = $config['parameters']['#password'];
-    $passwordAlreadyEncrypted = false; //$config['parameters']['passwordAlreadyEncrypted'];
-    $dieOnItemConflict = $config['parameters']['dieOnItemConflict'];
     $apiFunction = $config['parameters']['apiFunction'];
+    $dieOnItemConflict = $config['parameters']['dieOnItemConflict'];
+    $passwordAlreadyEncrypted = false; //$config['parameters']['passwordAlreadyEncrypted'];
 
+    print "version: 1.0.0" . $NL;
     print "host: " . $webServiceAddress . $NL;
-//    print "user: " . $username . $NL;
 
     // Create eWay API connector
     $connector = new eWayConnector($webServiceAddress, $username, $password, $passwordAlreadyEncrypted, $dieOnItemConflict);
@@ -63,7 +72,7 @@ try {
                     'Email' => $row[array_search('Email', $header)],
                     'Note' => $row[array_search('Note', $header)],
                     'Department' => $row[array_search('Department', $header)],
-                    'AdditionalFields' => array (
+                    'AdditionalFields' => array(
                         'af_18' => $row[array_search('MRPID', $header)], // MRPID
                         'af_19' => $row[array_search('CompanyName2', $header)], // Nazev 2
                         'af_20' => $row[array_search('OtherContact', $header)], // Jiny kontakt
@@ -73,7 +82,7 @@ try {
 
                 $guid = $row[array_search('ItemGUID', $header)];
 
-                if($guid != "NULL") {
+                if ($guid != "NULL") {
                     $company['ItemGUID'] = $row[array_search('ItemGUID', $header)];
                     $company['ItemVersion'] = $row[array_search('ItemVersion', $header)]++;
                     $isUpdate = true;
@@ -87,7 +96,7 @@ try {
                     $msg = ($isUpdate) ? "Company updated " : "New company created ";
                     $msg .= "with Guid {$result->Guid} \n";
                     echo $msg;
-//                fputcsv($fhOut, $row); TODO write log of stored companies
+                    fputcsv($fhOut, $row);
                 } else {
                     echo "Unable to create/update company: {$result->Description} \n";
                 }
@@ -107,7 +116,7 @@ try {
                     'ProjectName' => $row[array_search('ProjectName', $header)],
                     'TypeEn' => 'bd1fe684-8bea-43e0-8bb5-1666992d8530', // typ: zakazka
                     'StateEn' => 'e78d1b07-fe63-4d38-8bf5-5e1331103a40', // stav: priprava
-                    'AdditionalFields' => array (
+                    'AdditionalFields' => array(
                         'af_24' => $row[array_search('MRPID', $header)], // MRPID
                         'af_26' => $row[array_search('OrderNumber', $header)]
                     )
@@ -119,12 +128,12 @@ try {
                 $estimatedPrice = $row[array_search('EstimatedPrice', $header)];
                 $note = trim($row[array_search('Note', $header)] . " " . $row[array_search('Note2', $header)]);
 
-                if(! empty($projectStart)) $project['ProjectStart'] = $projectStart;
-                if(! empty($projectEnd)) $project['ProjectEnd'] = $projectEnd;
-                if(! empty($estimatedPrice)) $project['EstimatedPrice'] = $estimatedPrice;
-                if(! empty($note)) $project['Note'] = $note;
+                if (!empty($projectStart)) $project['ProjectStart'] = $projectStart;
+                if (!empty($projectEnd)) $project['ProjectEnd'] = $projectEnd;
+                if (!empty($estimatedPrice)) $project['EstimatedPrice'] = $estimatedPrice;
+                if (!empty($note)) $project['Note'] = $note;
 
-                if($guid != "NULL") {
+                if ($guid != "NULL") {
                     $company['ItemGUID'] = $guid;
                     $company['ItemVersion'] = $row[array_search('ItemVersion', $header)]++;
                     $isUpdate = true;
@@ -138,7 +147,7 @@ try {
                     $msg = ($isUpdate) ? "Project updated " : "New project created ";
                     $msg .= "with Guid {$result->Guid} \n";
                     echo $msg;
-//                fputcsv($fhOut, $row); TODO write log of stored projects
+                    fputcsv($fhOut, $row);
                 } else {
                     echo "Unable to create new project: {$result->Description} \n";
                 }
@@ -156,10 +165,10 @@ try {
 } catch (\Throwable $e) { // + $e
     print $e->getMessage();
     exit(2);
+} finally {
+    fclose($fhIn);
+    fclose($fhOut);
 }
-
-fclose($fhIn);
-fclose($fhOut);
 
 print "Processed " . $counter . " rows." . $NL;
 exit(0);
