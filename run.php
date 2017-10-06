@@ -30,6 +30,7 @@ try {
     }
 
     $header = fgetcsv($fhIn);
+    fputcsv($fhOut, array_push($header, "Timestamp"), ',', '"');
     $counter = 0;
 
     $dataDir = $arguments["data"] . DIRECTORY_SEPARATOR;
@@ -96,7 +97,7 @@ try {
                     $msg = ($isUpdate) ? "Company updated " : "New company created ";
                     $msg .= "with Guid {$result->Guid} \n";
                     echo $msg;
-                    fputcsv($fhOut, $row);
+                    fputcsv($fhOut, array_push($row, date('Y-m-d H:i:s')), ',', '"');
                 } else {
                     echo "Unable to create/update company: {$result->Description} \n";
                 }
@@ -147,7 +148,7 @@ try {
                     $msg = ($isUpdate) ? "Project updated " : "New project created ";
                     $msg .= "with Guid {$result->Guid} \n";
                     echo $msg;
-                    fputcsv($fhOut, $row);
+                    fputcsv($fhOut, array_push($row, date('Y-m-d H:i:s')), ',', '"');
                 } else {
                     echo "Unable to create new project: {$result->Description} \n";
                 }
