@@ -20,12 +20,17 @@ if (!isset($arguments["data"])) {
 try {
     $fhIn = fopen('/data/in/tables/source.csv', 'r');
     $fhOut = fopen('/data/out/tables/destination.csv', 'w');
+    $fhError = fopen('/data/out/tables/error.csv', 'w');
     if (!$fhIn) {
         print "Input file open failed.";
         exit(1);
     }
-    if (!$fhIn) {
+    if (!$fhOut) {
         print "Output file open failed.";
+        exit(1);
+    }
+    if (!$fhError) {
+        print "Error file open failed.";
         exit(1);
     }
 
@@ -33,6 +38,7 @@ try {
     $outHeader = $header;
     array_push($outHeader, "Timestamp");
     fputcsv($fhOut, $outHeader, ',', '"');
+    fputcsv($fhError, $outHeader, ',', '"');
     date_default_timezone_set('UTC');
     $counter = 0;
 
@@ -48,7 +54,7 @@ try {
     $dieOnItemConflict = $config['parameters']['dieOnItemConflict'];
     $passwordAlreadyEncrypted = false; //$config['parameters']['passwordAlreadyEncrypted'];
 
-    print "version: 1.0.0" . $NL;
+    print "version: 1.0.1" . $NL;
     print "host: " . $webServiceAddress . $NL;
 
     // Create eWay API connector
@@ -60,6 +66,8 @@ try {
 
             while ($row = fgetcsv($fhIn)) {
                 $row = array_map('trim', $row);
+                $outRow = $row;
+                array_push($outRow, date('Y-m-d H:i:s'));
                 $isUpdate = false;
 
                 $company = array(
@@ -100,11 +108,11 @@ try {
                     $msg = ($isUpdate) ? "Company updated " : "New company created ";
                     $msg .= "with Guid {$result->Guid} \n";
                     echo $msg;
-                    $outRow = $row;
-                    array_push($outRow, date('Y-m-d H:i:s'));
+                    $outRow['ItemGUID'] = $result->Guid;
                     fputcsv($fhOut, $outRow, ',', '"');
                 } else {
-                    echo "Unable to create/update company: {$result->Description} \n";
+                    fputcsv($fhError, $outRow, ',', '"');
+                    echo "Unable to create/update company: {$result->Description}, index: {$counter}  \n";
                 }
                 $counter++;
             }
@@ -115,6 +123,8 @@ try {
 
             while ($row = fgetcsv($fhIn)) {
                 $row = array_map('trim', $row);
+                $outRow = $row;
+                array_push($outRow, date('Y-m-d H:i:s'));
                 $isUpdate = false;
 
                 $project = array(
@@ -153,11 +163,11 @@ try {
                     $msg = ($isUpdate) ? "Project updated " : "New project created ";
                     $msg .= "with Guid {$result->Guid} \n";
                     echo $msg;
-                    $outRow = $row;
-                    array_push($outRow, date('Y-m-d H:i:s'));
+                    $outRow['ItemGUID'] = $result->Guid;
                     fputcsv($fhOut, $outRow, ',', '"');
                 } else {
-                    echo "Unable to create new project: {$result->Description} \n";
+                    fputcsv($fhError, $outRow, ',', '"');
+                    echo "Unable to create/update project: {$result->Description}, index: {$counter} \n";
                 }
                 $counter++;
             }
@@ -176,6 +186,7 @@ try {
 } finally {
     fclose($fhIn);
     fclose($fhOut);
+    fclose($fhError);
 }
 
 print "Processed " . $counter . " rows." . $NL;
