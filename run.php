@@ -30,7 +30,10 @@ try {
     }
 
     $header = fgetcsv($fhIn);
-    fputcsv($fhOut, array_push($header, "Timestamp"), ',', '"');
+    $outHeader = $header;
+    array_push($outHeader, "Timestamp");
+    fputcsv($fhOut, $outHeader, ',', '"');
+    date_default_timezone_set('UTC');
     $counter = 0;
 
     $dataDir = $arguments["data"] . DIRECTORY_SEPARATOR;
