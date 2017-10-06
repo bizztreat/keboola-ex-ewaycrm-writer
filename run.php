@@ -97,7 +97,9 @@ try {
                     $msg = ($isUpdate) ? "Company updated " : "New company created ";
                     $msg .= "with Guid {$result->Guid} \n";
                     echo $msg;
-                    fputcsv($fhOut, array_push($row, date('Y-m-d H:i:s')), ',', '"');
+                    $outRow = $row;
+                    array_push($outRow, date('Y-m-d H:i:s'));
+                    fputcsv($fhOut, $outRow, ',', '"');
                 } else {
                     echo "Unable to create/update company: {$result->Description} \n";
                 }
@@ -148,7 +150,9 @@ try {
                     $msg = ($isUpdate) ? "Project updated " : "New project created ";
                     $msg .= "with Guid {$result->Guid} \n";
                     echo $msg;
-                    fputcsv($fhOut, array_push($row, date('Y-m-d H:i:s')), ',', '"');
+                    $outRow = $row;
+                    array_push($outRow, date('Y-m-d H:i:s'));
+                    fputcsv($fhOut, $outRow, ',', '"');
                 } else {
                     echo "Unable to create new project: {$result->Description} \n";
                 }
