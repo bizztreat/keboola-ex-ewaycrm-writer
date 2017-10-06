@@ -54,7 +54,7 @@ try {
     $dieOnItemConflict = $config['parameters']['dieOnItemConflict'];
     $passwordAlreadyEncrypted = false; //$config['parameters']['passwordAlreadyEncrypted'];
 
-    print "version: 1.0.1" . $NL;
+    print "version: 1.0.2" . $NL;
     print "host: " . $webServiceAddress . $NL;
 
     // Create eWay API connector
@@ -108,7 +108,6 @@ try {
                     $msg = ($isUpdate) ? "Company updated " : "New company created ";
                     $msg .= "with Guid {$result->Guid} \n";
                     echo $msg;
-                    $outRow['ItemGUID'] = $result->Guid;
                     fputcsv($fhOut, $outRow, ',', '"');
                 } else {
                     fputcsv($fhError, $outRow, ',', '"');
@@ -163,7 +162,6 @@ try {
                     $msg = ($isUpdate) ? "Project updated " : "New project created ";
                     $msg .= "with Guid {$result->Guid} \n";
                     echo $msg;
-                    $outRow['ItemGUID'] = $result->Guid;
                     fputcsv($fhOut, $outRow, ',', '"');
                 } else {
                     fputcsv($fhError, $outRow, ',', '"');
