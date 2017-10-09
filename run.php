@@ -54,7 +54,7 @@ try {
     $dieOnItemConflict = $config['parameters']['dieOnItemConflict'];
     $passwordAlreadyEncrypted = false; //$config['parameters']['passwordAlreadyEncrypted'];
 
-    print "version: 1.0.2" . $NL;
+    print "version: 1.0.3" . $NL;
     print "host: " . $webServiceAddress . $NL;
 
     // Create eWay API connector
@@ -85,10 +85,14 @@ try {
                     'Note' => $row[array_search('Note', $header)],
                     'Department' => $row[array_search('Department', $header)],
                     'AdditionalFields' => array(
-                        'af_18' => $row[array_search('MRPID', $header)], // MRPID
-                        'af_19' => $row[array_search('CompanyName2', $header)], // Nazev 2
-                        'af_20' => $row[array_search('OtherContact', $header)], // Jiny kontakt
-                        'af_21' => $row[array_search('Mobile2', $header)] // Telefon dalsi
+                        'af_33' => $row[array_search('MRPID', $header)], // MRPID
+//                        'af_18' => $row[array_search('MRPID', $header)], // MRPID trial
+                        'af_26' => $row[array_search('CompanyName2', $header)], // Nazev 2
+//                        'af_19' => $row[array_search('CompanyName2', $header)], // Nazev 2 trial
+                        'af_27' => $row[array_search('OtherContact', $header)], // Jiny kontakt
+//                        'af_20' => $row[array_search('OtherContact', $header)], // Jiny kontakt trial
+                        'af_28' => $row[array_search('Mobile2', $header)] // Telefon dalsi
+//                        'af_21' => $row[array_search('Mobile2', $header)] // Telefon dalsi trial
                     )
                 );
 
@@ -132,8 +136,10 @@ try {
                     'TypeEn' => 'bd1fe684-8bea-43e0-8bb5-1666992d8530', // typ: zakazka
                     'StateEn' => 'e78d1b07-fe63-4d38-8bf5-5e1331103a40', // stav: priprava
                     'AdditionalFields' => array(
-                        'af_24' => $row[array_search('MRPID', $header)], // MRPID
-                        'af_26' => $row[array_search('OrderNumber', $header)]
+                        'af_34' => $row[array_search('MRPID', $header)], // MRPID
+//                        'af_24' => $row[array_search('MRPID', $header)], // MRPID trial
+                        'af_25' => $row[array_search('OrderNumber', $header)]
+//                        'af_26' => $row[array_search('OrderNumber', $header)] trial
                     )
                 );
 
