@@ -54,7 +54,7 @@ try {
     $dieOnItemConflict = $config['parameters']['dieOnItemConflict'];
     $passwordAlreadyEncrypted = false; //$config['parameters']['passwordAlreadyEncrypted'];
 
-    print "version: 1.0.4" . $NL;
+    print "version: 1.0.5" . $NL;
     print "host: " . $webServiceAddress . $NL;
 
     // Create eWay API connector
@@ -155,12 +155,12 @@ try {
                 if (!empty($note)) $project['Note'] = $note;
 
                 if ($guid != "NULL") {
-                    $company['ItemGUID'] = $guid;
-                    $company['ItemVersion'] = $row[array_search('ItemVersion', $header)]++;
+                    $project['ItemGUID'] = $guid;
+                    $project['ItemVersion'] = $row[array_search('ItemVersion', $header)]++;
                     $isUpdate = true;
                 } else {
-                    $company['TypeEn'] = '249d394a-4598-4f72-b559-8f0c4b97c02e'; // typ: servis
-                    $company['StateEn'] = '36b8b348-2114-42f6-908c-96dbffab3382'; // stav: v reseni
+                    $project['TypeEn'] = '249d394a-4598-4f72-b559-8f0c4b97c02e'; // typ: servis
+                    $project['StateEn'] = '36b8b348-2114-42f6-908c-96dbffab3382'; // stav: v reseni
                 }
 
 //                print_r($project);
