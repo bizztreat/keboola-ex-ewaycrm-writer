@@ -54,7 +54,7 @@ try {
     $dieOnItemConflict = $config['parameters']['dieOnItemConflict'];
     $passwordAlreadyEncrypted = false; //$config['parameters']['passwordAlreadyEncrypted'];
 
-    print "version: 1.0.5" . $NL;
+    print "version: 1.0.6" . $NL;
     print "host: " . $webServiceAddress . $NL;
 
     // Create eWay API connector
@@ -134,7 +134,7 @@ try {
                     'Companies_CustomerGuid' => $row[array_search('CompanyGUID', $header)],
                     'ProjectName' => $row[array_search('ProjectName', $header)],
 //                    'TypeEn' => '249d394a-4598-4f72-b559-8f0c4b97c02e', // typ: servis
-//                    'StateEn' => '36b8b348-2114-42f6-908c-96dbffab3382', // stav: v reseni
+//                    'StateEn' => '50670915-6abd-4047-9b08-1a991c45d3ba', // stav: prijato
                     'AdditionalFields' => array(
                         'af_34' => $row[array_search('MRPID', $header)], // MRPID
 //                        'af_24' => $row[array_search('MRPID', $header)], // MRPID trial
@@ -160,7 +160,7 @@ try {
                     $isUpdate = true;
                 } else {
                     $project['TypeEn'] = '249d394a-4598-4f72-b559-8f0c4b97c02e'; // typ: servis
-                    $project['StateEn'] = '36b8b348-2114-42f6-908c-96dbffab3382'; // stav: v reseni
+                    $project['StateEn'] = '50670915-6abd-4047-9b08-1a991c45d3ba'; // stav: prijato
                 }
 
 //                print_r($project);
