@@ -133,8 +133,8 @@ try {
                 $project = array(
                     'Companies_CustomerGuid' => $row[array_search('CompanyGUID', $header)],
                     'ProjectName' => $row[array_search('ProjectName', $header)],
-                    'TypeEn' => 'bd1fe684-8bea-43e0-8bb5-1666992d8530', // typ: zakazka
-                    'StateEn' => 'e78d1b07-fe63-4d38-8bf5-5e1331103a40', // stav: priprava
+                    'TypeEn' => '249d394a-4598-4f72-b559-8f0c4b97c02e', // typ: servis
+                    'StateEn' => '36b8b348-2114-42f6-908c-96dbffab3382', // stav: v reseni
                     'AdditionalFields' => array(
                         'af_34' => $row[array_search('MRPID', $header)], // MRPID
 //                        'af_24' => $row[array_search('MRPID', $header)], // MRPID trial
