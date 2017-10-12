@@ -54,7 +54,7 @@ try {
     $dieOnItemConflict = $config['parameters']['dieOnItemConflict'];
     $passwordAlreadyEncrypted = false; //$config['parameters']['passwordAlreadyEncrypted'];
 
-    print "version: 1.0.6" . $NL;
+    print "version: 1.1.0" . $NL;
     print "host: " . $webServiceAddress . $NL;
 
     // Create eWay API connector
@@ -133,8 +133,6 @@ try {
                 $project = array(
                     'Companies_CustomerGuid' => $row[array_search('CompanyGUID', $header)],
                     'ProjectName' => $row[array_search('ProjectName', $header)],
-//                    'TypeEn' => '249d394a-4598-4f72-b559-8f0c4b97c02e', // typ: servis
-//                    'StateEn' => '50670915-6abd-4047-9b08-1a991c45d3ba', // stav: prijato
                     'AdditionalFields' => array(
                         'af_34' => $row[array_search('MRPID', $header)], // MRPID
 //                        'af_24' => $row[array_search('MRPID', $header)], // MRPID trial
@@ -180,8 +178,67 @@ try {
             }
 
             break;
+        case "saveInvoice":
+            print "Reading data of invoices ..." . $NL;
+
+            while ($row = fgetcsv($fhIn)) {
+                $row = array_map('trim', $row);
+                $outRow = $row;
+                array_push($outRow, date('Y-m-d H:i:s'));
+                $isUpdate = false;
+
+                $invoice = array(
+                    'FileAs' => $row[array_search('InvoiceNumber', $header)],
+                    'Companies_CustomerGuid' => $row[array_search('CompanyGUID', $header)],
+                    'CurrencyEn' => '8d70fea5-8370-4923-97f5-8667707b4802', // CZK
+                    'TypeEn' => 'c06d165d-765b-4a93-a8b3-caf494dbbb34', // typ: Faktura vydaná
+                    'Note' => $row[array_search('Note', $header)],
+                    'Vat' => $row[array_search('Vat', $header)],
+                    'PriceTotal' => $row[array_search('PriceTotal', $header)],
+                    'PriceTotalExcludingVat' => $row[array_search('PriceTotalExcludingVat', $header)],
+                    'Paid' => $row[array_search('Paid', $header)],
+                    'PaidChanged' => $row[array_search('PaidChanged', $header)],
+                    'EffectiveFrom' => $row[array_search('EffectiveFrom', $header)],
+                    'ValidUntil' => $row[array_search('ValidUntil', $header)],
+                    'AdditionalFields' => array(
+                        'af_35' => $row[array_search('MRPID', $header)], // MRPID
+                        'af_36' => $row[array_search('Currency', $header)] // Originalni mena
+                    )
+                );
+
+                $isFullyPaid = $row[array_search('IsFullyPaid', $header)];
+                if ($isFullyPaid) {
+                    $invoice['StateEn'] = '92b34166-dff0-4c26-9f24-d96f086124d9'; // stav: zaplaceno
+                } else {
+                    $invoice['StateEn'] = '45448791-e10f-420e-a261-2c7db752d954'; // stav: vyfakturováno
+                }
+
+                $guid = $row[array_search('ItemGUID', $header)];
+                if ($guid != "NULL") {
+                    $invoice['ItemGUID'] = $row[array_search('ItemGUID', $header)];
+                    $invoice['ItemVersion'] = $row[array_search('ItemVersion', $header)]++;
+                    $isUpdate = true;
+                }
+
+//                print_r($invoice);
+                $result = $connector->saveCart($invoice);
+
+//                print_r($result);
+                if ($result->ReturnCode == 'rcSuccess') {
+                    $msg = ($isUpdate) ? "Invoice updated " : "New invoice created ";
+                    $msg .= "with Guid {$result->Guid} \n";
+                    echo $msg;
+                    fputcsv($fhOut, $outRow, ',', '"');
+                } else {
+                    fputcsv($fhError, $outRow, ',', '"');
+                    echo "Unable to create/update invoice: {$result->Description}, index: {$counter} \n";
+                }
+                $counter++;
+            }
+
+            break;
         default:
-            print "Unknown eWay API call! try: saveCompany, saveProject." . $NL;
+            print "Unknown eWay API call! try: saveCompany, saveProject, saveInvoice." . $NL;
             exit(1);
     }
 } catch (InvalidArgumentException $e) {
