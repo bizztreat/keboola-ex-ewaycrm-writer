@@ -41,6 +41,7 @@ try {
     fputcsv($fhError, $outHeader, ',', '"');
     date_default_timezone_set('UTC');
     $counter = 0;
+    $counterErr = 0;
 
     $dataDir = $arguments["data"] . DIRECTORY_SEPARATOR;
     $configFile = $dataDir . 'config.json';
@@ -116,6 +117,7 @@ try {
                 } else {
                     fputcsv($fhError, $outRow, ',', '"');
                     echo "Unable to create/update company: {$result->Description}, index: {$counter}  \n";
+                    $counterErr++;
                 }
                 $counter++;
             }
@@ -133,6 +135,7 @@ try {
                 $project = array(
                     'Companies_CustomerGuid' => $row[array_search('CompanyGUID', $header)],
                     'ProjectName' => $row[array_search('ProjectName', $header)],
+                    'CurrencyEn' => '8d70fea5-8370-4923-97f5-8667707b4802',
                     'AdditionalFields' => array(
                         'af_34' => $row[array_search('MRPID', $header)], // MRPID
 //                        'af_24' => $row[array_search('MRPID', $header)], // MRPID trial
@@ -148,7 +151,7 @@ try {
                 $note = trim($row[array_search('Note', $header)] . " " . $row[array_search('Note2', $header)]);
 
                 if (!empty($projectStart)) $project['ProjectStart'] = $projectStart;
-                if (!empty($projectEnd)) $project['ProjectEnd'] = $projectEnd;
+                if (!empty($projectEnd)) $project['ProjectRealEnd'] = $projectEnd;
                 if (!empty($estimatedPrice)) $project['EstimatedPrice'] = $estimatedPrice;
                 if (!empty($note)) $project['Note'] = $note;
 
@@ -173,6 +176,7 @@ try {
                 } else {
                     fputcsv($fhError, $outRow, ',', '"');
                     echo "Unable to create/update project: {$result->Description}, index: {$counter} \n";
+                    $counterErr++;
                 }
                 $counter++;
             }
@@ -197,7 +201,7 @@ try {
                     'PriceTotal' => $row[array_search('PriceTotal', $header)],
                     'PriceTotalExcludingVat' => $row[array_search('PriceTotalExcludingVat', $header)],
                     'Paid' => $row[array_search('Paid', $header)],
-                    'PaidChanged' => $row[array_search('PaidChanged', $header)],
+                    'PaymentDate' => $row[array_search('PaidChanged', $header)],
                     'EffectiveFrom' => $row[array_search('EffectiveFrom', $header)],
                     'ValidUntil' => $row[array_search('ValidUntil', $header)],
                     'AdditionalFields' => array(
@@ -232,6 +236,7 @@ try {
                 } else {
                     fputcsv($fhError, $outRow, ',', '"');
                     echo "Unable to create/update invoice: {$result->Description}, index: {$counter} \n";
+                    $counterErr++;
                 }
                 $counter++;
             }
@@ -254,4 +259,5 @@ try {
 }
 
 print "Processed " . $counter . " rows." . $NL;
+print "* with error " . $counterErr . " rows." . $NL;
 exit(0);
