@@ -155,13 +155,19 @@ try {
                 if (!empty($estimatedPrice)) $project['EstimatedPrice'] = $estimatedPrice;
                 if (!empty($note)) $project['Note'] = $note;
 
+                $isFinished = $row[array_search('IsFinished', $header)];
+                if ($isFinished) {
+                    $project['StateEn'] = 'c6eb9e3c-8560-43be-90e1-97b729095979'; // stav: vyfakturovano
+                } else {
+                    $project['StateEn'] = '50670915-6abd-4047-9b08-1a991c45d3ba'; // stav: prijato
+                }
+
                 if ($guid != "NULL") {
                     $project['ItemGUID'] = $guid;
                     $project['ItemVersion'] = $row[array_search('ItemVersion', $header)]++;
                     $isUpdate = true;
                 } else {
                     $project['TypeEn'] = '249d394a-4598-4f72-b559-8f0c4b97c02e'; // typ: servis
-                    $project['StateEn'] = '50670915-6abd-4047-9b08-1a991c45d3ba'; // stav: prijato
                 }
 
 //                print_r($project);
