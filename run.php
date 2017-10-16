@@ -206,8 +206,6 @@ try {
                     'Vat' => $row[array_search('Vat', $header)],
                     'PriceTotal' => $row[array_search('PriceTotal', $header)],
                     'PriceTotalExcludingVat' => $row[array_search('PriceTotalExcludingVat', $header)],
-                    'Paid' => $row[array_search('Paid', $header)],
-                    'PaymentDate' => $row[array_search('PaidChanged', $header)],
                     'EffectiveFrom' => $row[array_search('EffectiveFrom', $header)],
                     'ValidUntil' => $row[array_search('ValidUntil', $header)],
                     'AdditionalFields' => array(
@@ -224,6 +222,12 @@ try {
                 }
 
                 $guid = $row[array_search('ItemGUID', $header)];
+                $paid = $row[array_search('Paid', $header)];
+                $paidChanged = $row[array_search('PaidChanged', $header)];
+
+                if (!empty($paid)) $project['Paid'] = $paid;
+                if (!empty($paidChanged)) $project['PaymentDate'] = $paidChanged;
+
                 if ($guid != "NULL") {
                     $invoice['ItemGUID'] = $row[array_search('ItemGUID', $header)];
                     $invoice['ItemVersion'] = $row[array_search('ItemVersion', $header)]++;
