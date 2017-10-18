@@ -165,6 +165,7 @@ try {
                 if ($guid != "NULL") {
                     $project['ItemGUID'] = $guid;
                     $project['ItemVersion'] = $row[array_search('ItemVersion', $header)]++;
+                    $project['StateEn'] = '50670915-6abd-4047-9b08-1a991c45d3ba'; // nova bude vzdy stav prijato
                     $isUpdate = true;
                 } else {
                     $project['TypeEn'] = '249d394a-4598-4f72-b559-8f0c4b97c02e'; // typ: servis
