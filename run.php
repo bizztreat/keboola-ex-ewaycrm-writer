@@ -219,8 +219,8 @@ try {
                 $paid = $row[array_search('Paid', $header)];
                 $paidChanged = $row[array_search('PaidChanged', $header)];
 
-                if (!empty($paid)) $invoice['Paid'] = $paid;
-                if (!empty($paidChanged)) $invoice['PaymentDate'] = $paidChanged;
+                if (!empty($paid) && $paid != "NULL") $invoice['Paid'] = $paid;
+                if (!empty($paidChanged) && $paidChanged != "NULL") $invoice['PaymentDate'] = $paidChanged;
 
                 if ($guid != "NULL") {
                     $invoice['ItemGUID'] = $row[array_search('ItemGUID', $header)];
