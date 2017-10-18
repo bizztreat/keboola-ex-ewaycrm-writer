@@ -55,7 +55,7 @@ try {
     $dieOnItemConflict = $config['parameters']['dieOnItemConflict'];
     $passwordAlreadyEncrypted = false; //$config['parameters']['passwordAlreadyEncrypted'];
 
-    print "version: 1.1.0" . $NL;
+    print "version: 1.1.1" . $NL;
     print "host: " . $webServiceAddress . $NL;
 
     // Create eWay API connector
@@ -156,11 +156,6 @@ try {
                 if (!empty($note)) $project['Note'] = $note;
 
                 $isFinished = $row[array_search('IsFinished', $header)];
-                if ($isFinished) {
-                    $project['StateEn'] = 'c6eb9e3c-8560-43be-90e1-97b729095979'; // stav: vyfakturovano
-                } else {
-                    $project['StateEn'] = '50670915-6abd-4047-9b08-1a991c45d3ba'; // stav: prijato
-                }
 
                 if ($guid != "NULL") {
                     $project['ItemGUID'] = $guid;
@@ -168,6 +163,12 @@ try {
                     $isUpdate = true;
                 } else {
                     $project['TypeEn'] = '249d394a-4598-4f72-b559-8f0c4b97c02e'; // typ: servis
+
+                    if ($isFinished) {
+                        $project['StateEn'] = 'c6eb9e3c-8560-43be-90e1-97b729095979'; // stav: vyfakturovano
+                    } else {
+                        $project['StateEn'] = '50670915-6abd-4047-9b08-1a991c45d3ba'; // stav: prijato
+                    }
                 }
 
 //                print_r($project);
@@ -201,7 +202,7 @@ try {
                     'FileAs' => $row[array_search('InvoiceNumber', $header)],
                     'Companies_CustomerGuid' => $row[array_search('CompanyGUID', $header)],
                     'CurrencyEn' => '8d70fea5-8370-4923-97f5-8667707b4802', // CZK
-                    'TypeEn' => 'c06d165d-765b-4a93-a8b3-caf494dbbb34', // typ: Faktura vydaná
+//                    'TypeEn' => 'c06d165d-765b-4a93-a8b3-caf494dbbb34', // typ: Faktura vydaná
                     'Note' => $row[array_search('Note', $header)],
                     'Vat' => $row[array_search('Vat', $header)],
                     'PriceTotal' => $row[array_search('PriceTotal', $header)],
@@ -214,24 +215,26 @@ try {
                     )
                 );
 
-                $isFullyPaid = $row[array_search('IsFullyPaid', $header)];
-                if ($isFullyPaid) {
-                    $invoice['StateEn'] = '92b34166-dff0-4c26-9f24-d96f086124d9'; // stav: zaplaceno
-                } else {
-                    $invoice['StateEn'] = '45448791-e10f-420e-a261-2c7db752d954'; // stav: vyfakturováno
-                }
-
                 $guid = $row[array_search('ItemGUID', $header)];
                 $paid = $row[array_search('Paid', $header)];
                 $paidChanged = $row[array_search('PaidChanged', $header)];
 
-                if (!empty($paid)) $project['Paid'] = $paid;
-                if (!empty($paidChanged)) $project['PaymentDate'] = $paidChanged;
+                if (!empty($paid)) $invoice['Paid'] = $paid;
+                if (!empty($paidChanged)) $invoice['PaymentDate'] = $paidChanged;
 
                 if ($guid != "NULL") {
                     $invoice['ItemGUID'] = $row[array_search('ItemGUID', $header)];
                     $invoice['ItemVersion'] = $row[array_search('ItemVersion', $header)]++;
                     $isUpdate = true;
+                } else {
+                    $invoice['TypeEn'] = 'c06d165d-765b-4a93-a8b3-caf494dbbb34'; // typ: Faktura vydaná
+
+                    $isFullyPaid = $row[array_search('IsFullyPaid', $header)];
+                    if ($isFullyPaid) {
+                        $invoice['StateEn'] = '92b34166-dff0-4c26-9f24-d96f086124d9'; // stav: zaplaceno
+                    } else {
+                        $invoice['StateEn'] = '45448791-e10f-420e-a261-2c7db752d954'; // stav: vyfakturováno
+                    }
                 }
 
 //                print_r($invoice);
