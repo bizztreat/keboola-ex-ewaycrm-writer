@@ -55,7 +55,7 @@ try {
     $dieOnItemConflict = $config['parameters']['dieOnItemConflict'];
     $passwordAlreadyEncrypted = false; //$config['parameters']['passwordAlreadyEncrypted'];
 
-    print "version: 1.1.3" . $NL;
+    print "version: 1.2.0" . $NL;
     print "host: " . $webServiceAddress . $NL;
 
     // Create eWay API connector
@@ -262,9 +262,9 @@ try {
 } catch (InvalidArgumentException $e) {
     print $e->getMessage();
     exit(1);
-} catch (\Throwable $e) { // + $e
+} catch (Exception $e) { // + $e
     print $e->getMessage();
-    exit(2);
+    exit(1);
 } finally {
     fclose($fhIn);
     fclose($fhOut);
