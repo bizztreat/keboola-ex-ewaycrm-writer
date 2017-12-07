@@ -56,7 +56,7 @@ try {
     $debugMode = false; //$config['parameters']['debug'];
     $passwordAlreadyEncrypted = false; //$config['parameters']['passwordAlreadyEncrypted'];
 
-    print "version: 1.2.2" . $NL;
+    print "version: 1.2.3" . $NL;
     print "host: " . $webServiceAddress . $NL;
 
     // Create eWay API connector
@@ -160,7 +160,8 @@ try {
                 if ($isFinished) {
                     $project['StateEn'] = 'c6eb9e3c-8560-43be-90e1-97b729095979'; // stav: vyfakturovano
                 } else {
-                    $project['StateEn'] = '50670915-6abd-4047-9b08-1a991c45d3ba'; // stav: prijato
+//                    $project['StateEn'] = '50670915-6abd-4047-9b08-1a991c45d3ba'; // stav: prijato
+                    $project['StateEn'] = '36b8b348-2114-42f6-908c-96dbffab3382'; // stav: v řešení
                 }
 
                 if ($guid != "NULL") {
@@ -169,7 +170,8 @@ try {
                     $isUpdate = true;
                 } else {
                     $project['TypeEn'] = '249d394a-4598-4f72-b559-8f0c4b97c02e'; // typ: servis
-                    $project['StateEn'] = '50670915-6abd-4047-9b08-1a991c45d3ba'; // nova bude vzdy stav prijato
+//                    $project['StateEn'] = '50670915-6abd-4047-9b08-1a991c45d3ba'; // nova bude vzdy stav prijato
+                    $project['StateEn'] = '36b8b348-2114-42f6-908c-96dbffab3382'; // stav: v řešení
                 }
 
 //                print_r($project);
