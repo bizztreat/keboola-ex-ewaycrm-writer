@@ -135,9 +135,10 @@ try {
 
                 $project = array(
                     'Companies_CustomerGuid' => $row[array_search('CompanyGUID', $header)],
-                    'ProjectName' => $row[array_search('ProjectName', $header)],
+                    //'ProjectName' => $row[array_search('ProjectName', $header)],
                     'CurrencyEn' => '8d70fea5-8370-4923-97f5-8667707b4802',
                     'AdditionalFields' => array(
+                        'af_37' => $row[array_search('ProjectName', $header)], // ProjectName
                         'af_34' => $row[array_search('MRPID', $header)], // MRPID
 //                        'af_24' => $row[array_search('MRPID', $header)], // MRPID trial
                         'af_25' => $row[array_search('OrderNumber', $header)]
