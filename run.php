@@ -170,9 +170,15 @@ try {
                     $project['ItemVersion'] = $row[array_search('ItemVersion', $header)]++;
                     $isUpdate = true;
                 } else {
-                    $project['TypeEn'] = '249d394a-4598-4f72-b559-8f0c4b97c02e'; // typ: servis
-//                    $project['StateEn'] = '50670915-6abd-4047-9b08-1a991c45d3ba'; // nova bude vzdy stav prijato
                     $project['StateEn'] = '36b8b348-2114-42f6-908c-96dbffab3382'; // stav: v řešení
+                    if (strtoupper(substr($project['AdditionalFields']['af_25'], 2, 2)) == "SE") {
+                        $project['TypeEn'] = '249d394a-4598-4f72-b559-8f0c4b97c02e'; // typ: servis
+                    } else {
+                        $project['TypeEn'] = '478FE4B0-7A38-431E-A93A-021B182A8336'; // typ: reklamace
+                    }
+                    
+//                    $project['StateEn'] = '50670915-6abd-4047-9b08-1a991c45d3ba'; // nova bude vzdy stav prijato
+                    
                 }
 
 //                print_r($project);
